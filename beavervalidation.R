@@ -37,7 +37,7 @@ with(beaver2, {
 
 
 set.seed(1357121)
-## Data wrangling
+
 temp <- beaver2$temp + rnorm(length(beaver2$temp),0,0.1)
 
 activity <- factor(beaver2$activ)
@@ -57,9 +57,9 @@ obj <- MakeADFun(data = list(Y = temp,
                  random = "X",  # Specify the random effect/Use Laplace Approximation
                  DLL = "beavervalidation")
 
-## par: Parameters
+## par:  Parameters
 ## fn: The likelihood function
-## gr: The gradient fucntion 
+## gr: The gradient function 
 opt <- nlminb(obj$par,obj$fn,obj$gr)
 opt
 
@@ -67,7 +67,7 @@ opt
 report <- sdreport(obj,opt$par)
 sdreport <- summary(report,c("fixed","report"))
 sdreport # two mu parameters corresponds to mu of two states
- 
+
 
 ## One-step Prediction Residual
 onestepresid <- oneStepPredict(obj, observation.name = "Y",
@@ -77,7 +77,7 @@ onestepresid <- oneStepPredict(obj, observation.name = "Y",
 plot(onestepresid$residual)
 t.test(onestepresid$residual)
 
-# Wrong model:  two mu are the same
+## Wrong model:  two mus are the same
 obj2 <- MakeADFun(data = list(Y = temp,
                               act = activity),
                   parameters = list(logitPhi = 0,
@@ -91,27 +91,33 @@ obj2 <- MakeADFun(data = list(Y = temp,
                   DLL = "beavervalidation")
 opt2 <- nlminb(obj2$par,obj2$fn,obj2$gr)
 opt2
+# report 
+report2 <- sdreport(obj2,opt$par2)
+sdreport2 <- summary(report2,c("fixed","report"))
+sdreport2
+# 
 onestepresid2 <- oneStepPredict(obj2, observation.name = "Y",
                         data.term.indicator = "keep",
                         method = "oneStepGaussianOffMode")
 
 onestepresid2
 plot(onestepresid2$residual)
+qqnorm(onestepresid2$residual)
+abline(0,1)
 t.test(onestepresid2$residual)
+# K-S test for normality 
+ks1<-ks.test(onestepresid$residual,pnorm,0,1) 
+ks1$p.value
+ks2<-ks.test(onestepresid2$residual,pnorm,0,1)
+ks2$p.value
+# Ljun-Box test
+Box.test(onestepresid$residual, lag = 1, type = c( "Ljung-Box"), fitdf = 0)
+Box.test(onestepresid2$residual, lag = 1, type = c( "Ljung-Box"), fitdf = 0)
 
-
-#likelihood ratio test
+# likelihood ratio test
 testval <- 2 * (opt2$objective - opt$objective)
 
 # p-value 
 1 - pchisq(testval,length(opt$par) - length(opt2$par))
 
-# plots
-sumsdr <- summary(sdr)
-Xest <- sumsdr[rownames(sumsdr) == "X",]
-ciLow <- c(1,-2) %*% t(Xest)
-ciHigh <- c(1,2) %*% t(Xest)
 
-mu <- ss[rownames(ss) == "mu",]
-muCiL <- c(1,-2) %*% t(mu)
-muCiH <- c(1,2) %*% t(mu)
