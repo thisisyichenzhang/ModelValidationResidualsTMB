@@ -1,7 +1,7 @@
 ## This file serves as the R code for validation of beaver model
 ## with prediction quantile residuals
 
-## Model and Data: 
+## The original study can be found in 
 ## Reynolds, P. S. (1994)
 ## Time-series analyses of beaver body temperatures. 
 
