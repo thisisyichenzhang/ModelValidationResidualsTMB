@@ -4,14 +4,14 @@ Code for the Report
 
  ## Ricker model with zero-inflated Poisson observations
  
- # Correct model
+ ### Correct model
  
  * R code: zifpoisvalidation.R
  * C++ code: zifpoisvalidation.cpp
  
- # Modified model
+ ### Modified model
  
-  * R code: poisvalidation.R
+ * R code: poisvalidation.R
  * C++ code: poisvalidation.cpp
  
  ## Two dimensional AR(1) with measurement errors
