@@ -1,4 +1,4 @@
-## Model Validation Residuals TMB
+# Model Validation Residuals TMB
 Code for the Report 
 
 ## Beaver body temperatures  
